@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Peter Shi</title>
+  
+  <subtitle>无他,但手熟尔</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2018-06-15T10:07:37.567Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Peter Shi</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>我的第一篇博客</title>
+    <link href="http://yoursite.com/2018/06/09/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"/>
+    <id>http://yoursite.com/2018/06/09/我的第一篇博客/</id>
+    <published>2018-06-09T02:19:49.000Z</published>
+    <updated>2018-06-15T10:07:37.567Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="你好"><a href="#你好" class="headerlink" title="你好"></a>你好</h1><blockquote><p>哈哈哈</p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      离开手机放楼上的见风使舵就发来的手机发的是减肥路上的风景是对佛教四大浪费，圣诞节发的是解放军队赛峰，善良的克己复礼多少。
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+      <category term="swift" scheme="http://yoursite.com/tags/swift/"/>
+    
+  </entry>
+  
+</feed>
