@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2017/07/04/swift%E4%B8%AD%E7%9A%84Initialization/</loc>
+    
+    <lastmod>2018-07-05T07:44:20.928Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2018/03/05/swift%E4%B8%ADcopy%20on%20write%E7%9A%84%E7%A0%94%E7%A9%B6/</loc>
     
     <lastmod>2018-07-02T12:19:39.653Z</lastmod>
