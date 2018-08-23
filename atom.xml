@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-08-08T06:50:07.939Z</updated>
+  <updated>2018-07-02T12:19:39.653Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,26 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>iOS自动布局基础知识</title>
-    <link href="http://yoursite.com/2018/08/08/iOS%E8%87%AA%E5%8A%A8%E5%B8%83%E5%B1%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
-    <id>http://yoursite.com/2018/08/08/iOS自动布局基础知识/</id>
-    <published>2018-08-08T06:48:48.000Z</published>
-    <updated>2018-08-08T06:50:07.939Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
-    
-    
-      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
-    
-      <category term="swift" scheme="http://yoursite.com/tags/swift/"/>
-    
-  </entry>
   
   <entry>
     <title>swift中copy on write的研究</title>
@@ -86,6 +66,33 @@
       <category term="swift" scheme="http://yoursite.com/tags/swift/"/>
     
       <category term="函数式编程" scheme="http://yoursite.com/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>iOS自动布局基础知识</title>
+    <link href="http://yoursite.com/2018/01/08/iOS%E8%87%AA%E5%8A%A8%E5%B8%83%E5%B1%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
+    <id>http://yoursite.com/2018/01/08/iOS自动布局基础知识/</id>
+    <published>2018-01-08T06:48:48.000Z</published>
+    <updated>2018-08-23T08:51:19.868Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文参考自<a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html#//apple_ref/doc/uid/TP40010853-CH7-SW1" target="_blank" rel="noopener">Apple官方文档</a></p><p>Apple从最开始iPhone4的绝对布局，到后面iOS设备不断增多，推出的自动布局，Apple设备布局适配也经历了一段的逐渐完善的过程。现在Apple设备上用的最多的便是AutoLayout技术，期间也有很多技术诸如size class，stack view，UILayoutGuide，但这些的使用本质上都是基于AutoLayout，或者说让我们更方便的使用AutoLayout。基本上做Apple开发的都会使用AutoLayout，但是为了更好的理解以及日后的温故而知新，所以将AutoLayout的一些基础知识整理记录于此。</p><h1 id="AutoLayout是什么"><a href="#AutoLayout是什么" class="headerlink" title="AutoLayout是什么"></a>AutoLayout是什么</h1><p>AutoLayout也就是我们所说的自动布局，是Apple在iOS6的时候推出的，用来代替原先绝对布局的布局方案。因为从iOS6那时候开始，已经有了iPhone5，iPhone的尺寸已经开始多样化，不仅仅局限于iPhone4了。AutoLayout能够基于视图上的约束(constraint)，动态的计算视图的尺寸和位置，并且能够动态地响应视图内部或者外部的变化。</p><p>影响视图的布局有视图内部的变化，也有视图外部的变化。一般而言，当一个视图的父视图他的尺寸或者形状发生改变，从而需要视图重新布局，这就是外部原因；如果视图由于自己内部内容，或者一些交互引起的视图尺寸或者形状改变，从而需要更新布局，这就是内部原因。</p><p>iOS到目前为止，总共有三种技术来布局视图，所有招数都是基于此三种，如下：</p><ul><li><p>用代码计算布局</p></li><li><p>用autoresizing masks来自动处理一些外部变化造成的布局更新</p></li><li><p>AutoLayout</p></li></ul><p>用代码计算布局：这是最传统的方式，我们用代码来计算界面上每一个视图的frame，计算它的起点，和长宽，然后添加到界面上。这确实是最精准，也是最强大的方法。但是，如果发生变化，譬如竖屏转横屏之类，每次我们都得重新计算界面上的所有元素的frame，一旦界面很复杂，那就是一个工作量很大，且及其无聊的工作。很明显，用纯代码计算frame的方式创建真正的自适应布局，太繁琐，太不友好。</p><p>autoresizing masks：我们可以使用autoresizing masks来简化一些用代码计算frame方式的操作。autoresizing masks可以指定当父视图frame改变时，自身的frame将如何改变。这个可以很好的解决外部改变时，造成的当前视图布局的改变。但是对于复杂界面的布局，特别是由内部变化造成的布局改变，autoresizing masks就无法处理了。</p><p>AutoLayout：相比于上面两种方法，这是一个全新的，全面的布局解决方案。AutoLayout不再考虑一个视图的frame，而是考虑两个视图之间的关系。它可以给视图添加一系列约束，一个约束就代表了两个视图之间的关系，然后AutoLayout会根据每个视图的约束，自动计算它的尺寸和位置。并且AutoLayout能够同时响应内部和外部的变化。看下面的图，感受下：<img src="https://res.cloudinary.com/petershi/image/upload/v1534924046/layout_constraints1.png" alt="AutoLayout-Constraint"></p><h1 id="尽可能使用UIStackView"><a href="#尽可能使用UIStackView" class="headerlink" title="尽可能使用UIStackView"></a>尽可能使用UIStackView</h1><p>stack view提供了一系列很方便的API，可以让用户利用AutoLayout的强大能力，但是却不需要用户直接和constraint打交道。实际上，stack view的一系列布局操作，本质上就是基于AutoLayout的，只不过创建那些复杂的约束已经被封装成一些简单的API或者属性了。</p><p>通常情况下，尽可能使用stack view来布局我们的界面，除非当stack view无法满足我们的条件时，我们才会手动去使用AutoLayout来添加约束。关于stack view 的基础知识，可以看我的另外一篇博客<a href="http://peteruncle.com/2017/08/09/UIStackView基础知识/" target="_blank" rel="noopener">UIStackView基础知识</a>。</p><h1 id="对于constraint-约束-的剖析"><a href="#对于constraint-约束-的剖析" class="headerlink" title="对于constraint(约束)的剖析"></a>对于constraint(约束)的剖析</h1><p>我们通过AutoLayout给视图添加一系列约束，好让这些约束互相结合，使被作用的视图有且仅有一种合理布局。那么约束到底如何工作的，其实约束就相当于一个等式。</p><p>来看一个简单的约束：<img src="https://res.cloudinary.com/petershi/image/upload/v1534925509/view_formula_2x.png" alt="约束"></p><p>这个约束表明红色view的左边界必须在蓝色view的右边界再往后8个像素点。注意，这里的<code>=</code>不是赋值的意思，就是相等的意思。上图的这个等式就和方程式一样，可以按照数学逻辑，把8移到左边也是可以的。</p><h2 id="AutoLayout的属性"><a href="#AutoLayout的属性" class="headerlink" title="AutoLayout的属性"></a>AutoLayout的属性</h2><p>上图里面的leading就是AutoLayout的一个属性，它们都是NSLayoutAttribute类型的枚举值，它还有很多其他属性，都可以用来表示布局。AutoLayout我们常用到的属性包含四个边界：leading(或者left)，trailing(或者right)，top，bottom，还有宽高：height，width，以及水平居中垂直居中：vertical center，horizontal center。看下图就明白了：<img src="https://res.cloudinary.com/petershi/image/upload/v1534929996/attributes_2x.png" alt="属性"></p><p>AutoLayout众多的布局属性，配合多种参数，可以组成非常多的约束，也就是可以组成非常多的上述的等式。但所有的属性可以分为两种类型：1.尺寸属性，例如height，width；2.位置属性，例如leading，top。一种用来指定视图的尺寸大小，一种用来指定视图相对其他视图的位置。</p><p>通常情况下，布局一个界面的视图会有好几种不同的约束方案，我们可以根据我们自己的需求和意图来决定使用那种约束方案。但是一般我们遵循下面的约束设计规则：</p><ul><li><p>整形乘数比带小数点的乘数更受欢迎，也就是约束等式里的Multiplier是整数更好</p></li><li><p>正数常量比负数常量更受欢迎，譬如第一个例子的常量8移动等式左边变为-8也是可以的，但是这样不太好，我们还是希望把它以正数的形式放在右边</p></li><li><p>如果我们手动编写视图的约束，尽可能按照界面上视图从前往后（leading-trailing），从上到下（top-bottom）的顺序</p></li></ul><h2 id="创建没有歧义，符合要求的布局"><a href="#创建没有歧义，符合要求的布局" class="headerlink" title="创建没有歧义，符合要求的布局"></a>创建没有歧义，符合要求的布局</h2><p>一般当我们使用AutoLayout来布局页面时，我们的目标就是创建一系列约束，来让界面里的视图有且仅有一种布局方案。但有时候，我们经常会创建出模棱两可或者不合适的约束。</p><p>譬如我们有一个view，我们创建了它的两个约束leading，trailing，那么这个view的左边界和前面视图的距离以及右边界和后面视图的距离已经被约束好了，其实这个view的宽已经被确定了，但是这个时候，如果我们再给这个view添加一个width的约束，那么这个约束就会和之前的有冲突，AutoLayout会无法确定到底使用那个约束来确定这个view的宽，这就产生了歧义。所以我们要尽量避免这样的模棱两可，有歧义的约束组合。</p><p>还有，即便界面展示效果相同，其实也会有多种约束方案。看下面例子：</p><p><img src="https://res.cloudinary.com/petershi/image/upload/v1534991861/Blocks_Portrait_2x.png" alt="多种约束方案"></p><p>上面这个图的布局要求是距离上下左右边界均为20，红色view和蓝色view间距10，且宽高相等。</p><p>我们一般最先想到的约束方案应该就是这样的：<img src="https://res.cloudinary.com/petershi/image/upload/v1534991985/two_view_example_1_2x.png" alt="约束方案1"></p><ol><li><p><code>// Vertical Constraints</code></p></li><li><p><code>Red.top = 1.0 * Superview.top + 20.0</code></p></li><li><p><code>Superview.bottom = 1.0 * Red.bottom + 20.0</code></p></li><li><p><code>Blue.top = 1.0 * Superview.top + 20.0</code></p></li><li><p><code>Superview.bottom = 1.0 * Blue.bottom + 20.0</code></p></li><li><p><code>// Horizontal Constraints</code></p></li><li><p><code>Red.leading = 1.0 * Superview.leading + 20.0</code></p></li><li><p><code>Blue.leading = 1.0 * Red.trailing + 8.0</code></p></li><li><p><code>Superview.trailing = 1.0 * Blue.trailing + 20.0</code></p></li><li><p><code>Red.width = 1.0 * Blue.width + 0.0</code></p></li></ol><p>这个方案就是设置四边的间距以及两个view之间的间距，还有两个view相等。</p><p>其实的话，我们还可以用另外一种约束方案，如下：<img src="https://res.cloudinary.com/petershi/image/upload/v1534991995/two_view_example_2_2x.png" alt="约束方案2"></p><ol><li><p><code>// Vertical Constraints</code></p></li><li><p><code>Red.top = 1.0 * Superview.top + 20.0</code></p></li><li><p><code>Superview.bottom = 1.0 * Red.bottom + 20.0</code></p></li><li><p><code>Red.top = 1.0 * Blue.top + 0.0</code></p></li><li><p><code>Red.bottom = 1.0 * Blue.bottom + 0.0</code></p></li><li><p><code>//Horizontal Constraints</code></p></li><li><p><code>Red.leading = 1.0 * Superview.leading + 20.0</code></p></li><li><p><code>Blue.leading = 1.0 * Red.trailing + 8.0</code></p></li><li><p><code>Superview.trailing = 1.0 * Blue.trailing + 20.0</code></p></li><li><p><code>Red.width = 1.0 * Blue.width + 0.0</code></p></li></ol><p>这个方案和第一个不一样了，这次我们约束了红色view和父视图之间的上边距和下边距，当时没有约束蓝色 view，而是让蓝色view的上边界和下边界与红色view 的上边界和下边界对齐，这样同样也达到了要求的布局效果。</p><p>这两个约束方案都是可行的，并没有哪个一定更好的说法，更多的是按照实际情况，选择最符合要求的即可。</p><h2 id="不等式约束"><a href="#不等式约束" class="headerlink" title="不等式约束"></a>不等式约束</h2><p>上述我们讲的这些约束都是等式约束，其实这不是全部，还有不等式约束。除了<code>=</code>，其实还有<code>&lt;=</code>和<code>&gt;=</code>。</p><p>譬如设置一个view宽的最小值和最大值：</p><p>1.<code>view.width &gt;= 0.0 * NotAnAttribute + 40.0</code></p><p>2.<code>view.width &lt;= 0.0 * NotAnAttribute + 200.0</code></p><p>那这个view的宽度就在40～200之间了。</p><p>等式约束也可以用不等式约束来表示，但一般我们不会这样做：</p><p>等式约束：<code>Blue.leading = 1.0 * Red.trailing + 8.0</code></p><p>不等式约束：<code>Blue.leading &gt;= 1.0 * Red.trailing + 8.0</code>，<code>Blue.leading &lt;= 1.0 * Red.trailing + 8.0</code></p><p>其实这两个效果是一样的。</p><h2 id="约束的优先级"><a href="#约束的优先级" class="headerlink" title="约束的优先级"></a>约束的优先级</h2><p>默认的情况下，我们在interface build里添加的约束都是必要的(Required)，打开属性面板，点开我们添加的约束，会发现它的<code>Priority</code>默认值就是1000，也就是必要的。AutoLayout会将所有必要的约束都纳入计算，如果发现有冲突，那么就会在控制台打印出消息。<img src="https://res.cloudinary.com/petershi/image/upload/v1534995075/priority1.png" alt="约束优先级"></p><p><code>Priority</code>的值在1-1000之间，1000代表着必要，所有非1000的值，都说明这个约束是可选的，当然，数值越高，代表这个约束优先级越高。</p><p>当AutoLayout计算局部的时候，会按照优先级从高到低的顺序逐个计算，如果发现一个可选的约束无法被满足，那么就会跳过这个约束，去计算下一个约束。但是即便一个约束无法被正好适配，它依然可以影响布局。譬如当AutoLayout跳过了一个可选约束的时候，最终发现约束方案存在模棱两可的地方，那么系统会选择最接近被跳过的那个约束的布局方案。</p><p>虽然大多数时候我们设置的约束都是默认的Required，但是约束优先级的设置有时候会很有用，我在设置UIScrollView的约束时就用到了，大家可以看一下<a href="http://peteruncle.com/2016/08/02/UIScrollView中的Autolayout/" target="_blank" rel="noopener">UIScrollView中的AutoLayout</a>。</p><h2 id="固有的内容尺寸-Intrinsic-Content-Size"><a href="#固有的内容尺寸-Intrinsic-Content-Size" class="headerlink" title="固有的内容尺寸(Intrinsic Content Size)"></a>固有的内容尺寸(Intrinsic Content Size)</h2><p>上面的例子，我们都是用约束组合，来确定view的位置和尺寸，但是，有一些视图自身便有一个固有的内容尺寸，叫<code>Intrinsic Content Size</code>，其实就是自身内在内容和边距所占居的尺寸。譬如，UIButton它就有固有的内容尺寸，它的Intrinsic Content Size等于它自身title的尺寸再加上自身内容边距(margin)。</p><p>并不是所有的view都拥有Intrinsic Content Size，我们看下面的图：</p><table><thead><tr><th>View</th><th>Intrinsic content size</th></tr></thead><tbody><tr><td>UIView and NSView</td><td>No intrinsic content size.</td></tr><tr><td>Sliders</td><td>Defines only the width (iOS).Defines the width, the height, or both—depending on the slider’s type (OS X).</td></tr><tr><td>Labels, buttons, switches, and text fields</td><td>Defines both the height and the width.</td></tr><tr><td>Text views and image views</td><td>Intrinsic content size can vary.</td></tr></tbody></table><p>固有内容尺寸是基于视图的内容的。譬如label和button的固有内容尺寸，是基于它们文字的数量和文字的字体还有margin内容边距。其他的视图可能会复杂一些，譬如UIImageView，当它空的时候，它并没有固有内容尺寸，一旦你添加了一张图片进去后，固有内容尺寸就变成了这张图片的尺寸了。再如UITextView，它的固有内容尺寸不仅仅基于内容，还取决于是否可以滚动。如果可以滚动，他就没有固有内容尺寸，如果不可以滚动，那就取决于所有文字的尺寸。</p><p>AutoLayout计算一个view的尺寸还用到了一对约束<code>Content Hugging Priority</code>和<code>Content Compression Resistance Priority</code>。</p><p><code>Content Hugging Priority</code>：内容紧抱的优先级，表示一个视图抗被拉伸的优先级，数值越高表示优先级越高，越不容易被拉伸。</p><p><code>Content Compression Resistance Priority</code>：内容压缩阻力优先级，表示一个视图抗压缩的优先级，数值越高表示优先级越高，越不容易被压缩。<img src="https://res.cloudinary.com/petershi/image/upload/v1535012480/intrinsic_content_size_2x.png" alt="内容抗拉升，抗压缩"></p><p>默认情况下，一个view的content hugging优先级是250，content compression resistance优先级是750，因此，一个view的拉伸比起它的压缩是更容易的。这个都会影响到固有内容尺寸的大小。</p><p>在我们平时的使用AutoLayout布局的时候，我们应该尽可能使用一个view的Intrinsic Content Size，也就是固有内容尺寸。因为这样可以让我们的布局随着view中内容的改变而动态改变，不仅如此，这个也可以减少我们约束数量，只不过我们有时候需要控制好content hugging和content compression resistance的优先级而已。譬如你会发现，在Interface builder里给一个UILabel添加约束，只需要添加top，leading就可以了，而无需指定宽高，因为label有固有内容尺寸，可以根据这个来动态确定label的大小了，我们也就可以少添加一些约束了。</p><p>一个view的固有内容尺寸，更像是AutoLayout的内部使用的尺寸，如果一个view有固有内容尺寸，那么AutoLayout会用它来计算布局，尺寸等。而一个view在其父视图坐标系里的frame.size尺寸，称之为fitting size，这个是经过AutoLayout系统计算出来的输出给外部用的尺寸。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>AutoLayout是一个非常好用的技术，对于自适应动态布局提供了很好的支持，我们都会用一些，不过它所涉及到的一些基础知识可能并不是所有人都去扒过文档，基础知识对于更好的理解AutoLayout还是非常重要的，所以记录于此，方便自己以后温故而知新，也方便有需要的同学。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;本文参考自&lt;a href=&quot;https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html#//apple_ref/doc
+      
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+    
+      <category term="swift" scheme="http://yoursite.com/tags/swift/"/>
     
   </entry>
   
